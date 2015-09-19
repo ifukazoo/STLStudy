@@ -7,6 +7,7 @@
 #include <list>
 #include <deque>
 #include <algorithm>
+#include <numeric>
 #include <iostream>
 #include <functional>
 #include <iterator>
@@ -102,7 +103,7 @@ int main()
     print_container(v.begin(), v.end());
   }
 
-  // inject map
+  // inject
   {
     int ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     std::vector<int> v(ten, ten + array_length(ten));
@@ -110,76 +111,46 @@ int main()
     int sum = for_each(v.begin(), v.end(), Sum<int>());
     std::cout << "sum:" << sum << std::endl;
   }
-
-#if 0
-    strs.push_back(s[i]);
+  {
+    int ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::vector<int> v(ten, ten + array_length(ten));
+    print_container(v.begin(), v.end());
+    int sum = accumulate(v.begin(), v.end(), 0, Sum2<int>());
+    std::cout << "sum:" << sum << std::endl;
   }
-  print_container(strs.begin(), strs.end());
-  std::vector<int> lens(12);
-  transform(strs.begin(), strs.end(), lens.begin(), GetLength());
-  print_container(lens.begin(), lens.end());
-
-  // <algorithm>の基底クラスを利用
-  std::vector<int> v3(20);
-  generate(v3.begin(), v3.end(), my_rand);
-  std::cout << "before:";
-  print_container(v3.begin(), v3.end());
-  int count = count_if(v3.begin(), v3.end(), IsEven());
-  std::cout << "even is :" << count << std::endl;
 
   // バインダ
-  // 2項関数をとるalgorithmを1項関数のように振る舞わせる．
-  std::vector<int>::iterator p;
-  // greaterの第2引数に常時5がバインドされる．
-  p = remove_if(v3.begin(), v3.end(), std::bind2nd(std::greater<int>(), 5));
-  std::cout << "after:";
-  print_container(v3.begin(), p);
+  {
+    // 2項関数をとるalgorithmを1項関数のように振る舞わせる．
+    std::list<int> l(10);
+    generate(l.begin(), l.end(), my_rand);
+    print_container(l.begin(), l.end());
 
-  // insert iterator
-  std::list<std::string> strv1, strv2;
-  strv1.push_back("The");
-  strv1.push_back("STL");
-  strv1.push_back("are");
-  strv1.push_back("powerful.");
-  print_container(strv1.begin(), strv1.end());
+    // greaterの第2引数に常時5がバインドされる．
+    std::list<int> v;
+    copy_if(l.begin(), l.end(), back_inserter(v),
+        std::bind2nd(std::greater<int>(), 5));
+    print_container(v.begin(), v.end());
+  }
+  {
+    std::vector<int> v(10);
+    generate(v.begin(), v.end(), my_rand);
+    print_container(v.begin(), v.end());
 
-  strv2.push_back("and");
-  strv2.push_back("insert");
-  strv2.push_back("iterators");
-  print_container(strv2.begin(), strv2.end());
+    std::vector<int>::iterator last =
+      remove_if(v.begin(), v.end(), std::bind2nd(std::greater<int>(), 5));
+    std::vector<int> newone(v.begin(), last);
+    std::cout << "size:" << newone.size() << std::endl;
+  }
 
-  // 1に2を挿入する
-  std::list<std::string>::iterator i = strv1.begin();
-  i++; i++;
-  copy(strv2.begin(), strv2.end(), inserter(strv1, i));
-  print_container(strv1.begin(), strv1.end());
-
-  // 自動で拡張するのでコピー先が空でも大丈夫
-  std::list<std::string> strv3;
-  copy(strv1.begin(), strv1.end(), inserter(strv3, strv3.begin()));
-  print_container(strv3.begin(), strv3.end());
-
-  // 末尾に挿入する２つのやり方
-  //   inserter
-  copy(strv2.begin(), strv2.end(), inserter(strv1, strv1.end()));
-  print_container(strv1.begin(), strv1.end());
-
-  //   back inserter
-  copy(strv2.begin(), strv2.end(), back_inserter(strv1));
-  print_container(strv1.begin(), strv1.end());
-
-  // 先頭に挿入する２つのやり方
-  //   inserter
-  copy(strv2.begin(), strv2.end(), inserter(strv1, strv1.begin()));
-  print_container(strv1.begin(), strv1.end());
-
-  //   front inserter
-  //   ※これは動きが異なる
-  copy(strv2.begin(), strv2.end(), front_inserter(strv1));
-  print_container(strv1.begin(), strv1.end());
-
-
-#endif
+  // Enumerable#select 的な動作
+  {
+    std::vector<std::string> v(months, months + array_length(months));
+    std::list<std::string> l;
+        std::string ending("ber");
+    copy_if(v.begin(), v.end(), back_inserter(l), EndsWith(ending));
+    print_container(l.begin(), l.end());
+  }
 
   getchar();
 

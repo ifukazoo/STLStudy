@@ -57,6 +57,12 @@ struct Sum {
   }
   T sum_;
 };
+template<typename T>
+struct Sum2 {
+  T operator()(T lhs, T rhs) {
+    return lhs + rhs;
+  }
+};
 
 struct GetLength
 {
