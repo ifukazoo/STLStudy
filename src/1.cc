@@ -24,9 +24,9 @@ int main()
 
   {
     // 要素を生成する
-    std::vector<std::string> v(months, months + sizeof(months) / sizeof(months[0]));
-    std::list<std::string>   l(months, months + sizeof(months) / sizeof(months[0]));
-    std::deque<std::string>  d(months, months + sizeof(months) / sizeof(months[0]));
+    std::vector<std::string> v(months, months + array_length(months));
+    std::list<std::string>   l(months, months + array_length(months));
+    std::deque<std::string>  d(months, months + array_length(months));
     print_container(v.begin(), v.end());
     print_container(l.begin(), l.end());
     print_container(d.begin(), d.end());
@@ -44,7 +44,7 @@ int main()
 
   // 各要素に適用する
   {
-    std::vector<std::string> v(months, months + sizeof(months) / sizeof(months[0]));
+    std::vector<std::string> v(months, months + array_length(months));
     // 適用関数をリファレンス引数にすることで，破壊的な関数として扱える
     for_each(v.begin(), v.end(), ToUpper());
     print_container(v.begin(), v.end());
@@ -59,7 +59,7 @@ int main()
     std::cout << "0:" << zero << std::endl;
   }
   {
-    std::vector<std::string> v(months, months + sizeof(months) / sizeof(months[0]));
+    std::vector<std::string> v(months, months + array_length(months));
     int gt7 = count_if(v.begin(), v.end(), GT(7));
     std::cout << "greater than 7:" << gt7 << std::endl;
     std::string ending("ber");
