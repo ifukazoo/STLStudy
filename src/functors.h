@@ -40,6 +40,24 @@ struct ToUpper {
   }
 };
 
+struct Square {
+  int operator()(int n) {
+    return n * n;
+  }
+};
+
+template<typename T>
+struct Sum {
+  Sum():sum_(0){};
+  void operator()(T& val) {
+    sum_ += val;
+  }
+  operator T () {
+    return static_cast<T>(sum_);
+  }
+  T sum_;
+};
+
 struct GetLength
 {
   int operator()(std::string s) {
@@ -53,11 +71,6 @@ struct IsEight {
   }
 };
 
-struct Square {
-  int operator()(int n) {
-    return n * n;
-  }
-};
 
 
 struct IsEven: public std::unary_function<int, bool> {

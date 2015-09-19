@@ -1,16 +1,19 @@
 ﻿#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+
 #include <string>
 #include <vector>
 #include <list>
 #include <deque>
 #include <algorithm>
-#include <cstdlib>
 #include <iostream>
 #include <functional>
 #include <iterator>
 
 #include "algorithms.h"
 #include "functors.h"
+#include "functions.h"
 
 int main()
 {
@@ -71,14 +74,15 @@ int main()
     generate(v.begin(), v.end(), my_rand);
     print_container(v.begin(), v.end());
 
-    //// indsert iteratorを使って第2vectorの要素数を自動的に確保
+    //// insert iteratorを使って第2vectorの要素数を自動的に確保
     std::vector<int> v2;
     transform(v.begin(), v.end(), inserter(v2, v2.begin()), Square());
     print_container(v2.begin(), v2.end());
 
     //// vector -> list もできる
+    ///  back_inserter も
     std::list<int> l;
-    transform(v.begin(), v.end(), inserter(l, l.begin()), Square());
+    transform(v.begin(), v.end(), back_inserter(l), Square());
     print_container(l.begin(), l.end());
 
     //// 元コンテナの上書き
@@ -98,12 +102,16 @@ int main()
     print_container(v.begin(), v.end());
   }
 
+  // inject map
+  {
+    int ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::vector<int> v(ten, ten + array_length(ten));
+    print_container(v.begin(), v.end());
+    int sum = for_each(v.begin(), v.end(), Sum<int>());
+    std::cout << "sum:" << sum << std::endl;
+  }
+
 #if 0
-  // stringでmapをやってみる．
-  std::string s[] = { "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December", "" };
-  std::vector<std::string> strs;
-  for (int i = 0; s[i] != ""; i++) {
     strs.push_back(s[i]);
   }
   print_container(strs.begin(), strs.end());
@@ -172,6 +180,8 @@ int main()
 
 
 #endif
+
+  getchar();
 
   return 0;
 }
