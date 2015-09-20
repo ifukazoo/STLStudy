@@ -34,9 +34,18 @@ struct GT: public std::unary_function<std::string, bool> {
   }
 };
 
+struct Print {
+  template<typename T>
+  void operator()(T val) {
+    std::cout << val << " ";
+  }
+};
+
 struct ToUpper {
-  void operator()(std::string& s) {
-    std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+  std::string operator()(std::string& org) {
+    std::string upper = org;;
+    std::transform(org.begin(), org.end(), upper.begin(), ::toupper);
+    return upper;
   }
 };
 
@@ -85,12 +94,6 @@ struct IsEven: public std::unary_function<int, bool> {
   }
 };
 
-struct Print {
-  template<typename T>
-  void operator()(T val) {
-    std::cout << val << " ";
-  }
-};
 
 
 #endif

@@ -16,15 +16,16 @@
 #include "functors.h"
 #include "functions.h"
 
+inline void print_sep(int n);
+
 int main()
 {
   RandomGenerator my_rand(static_cast<unsigned>(time(NULL)), 10);
   std::string months[] = { "January", "February", "March", "April", "May",
     "June", "July", "August", "September", "October", "November", "December" };
 
-
+  // 要素を生成する
   {
-    // 要素を生成する
     std::vector<std::string> v(months, months + array_length(months));
     std::list<std::string>   l(months, months + array_length(months));
     std::deque<std::string>  d(months, months + array_length(months));
@@ -42,14 +43,34 @@ int main()
     generate(l.begin(), l.end(), my_rand);
     print_container(l.begin(), l.end());
   }
+  {
+    std::deque<int> d(10);
+    generate(d.begin(), d.end(), my_rand);
+    print_container(d.begin(), d.end());
+  }
+  print_sep(__LINE__);
+
+  // 代入できる
+  {
+    std::vector<std::string> v(months, months + array_length(months));
+    std::list<std::string>   l(months, months + array_length(months));
+    std::deque<std::string>  d(months, months + array_length(months));
+    std::vector<std::string> v2 = v;
+    std::list<std::string>   l2 = l;
+    std::deque<std::string>  d2 = d;
+    print_container(v2.begin(), v2.end());
+    print_container(l2.begin(), l2.end());
+    print_container(d2.begin(), d2.end());
+  }
+  print_sep(__LINE__);
 
   // 各要素に適用する
   {
     std::vector<std::string> v(months, months + array_length(months));
-    // 適用関数をリファレンス引数にすることで，破壊的な関数として扱える
-    for_each(v.begin(), v.end(), ToUpper());
-    print_container(v.begin(), v.end());
+    for_each(v.begin(), v.end(), Print());
+    std::cout << std::endl;
   }
+  print_sep(__LINE__);
 
   // 数える
   {
@@ -67,8 +88,9 @@ int main()
     int ber = count_if(v.begin(), v.end(), EndsWith(ending));
     std::cout << "ends with \"ber\":" << ber << std::endl;
   }
+  print_sep(__LINE__);
 
-  // 各要素に変更適用
+  // 各要素に変更適用 Enumerable#map
   {
     // 適用結果を別コンテナにコピー
     std::vector<int> v(10);
@@ -80,16 +102,38 @@ int main()
     transform(v.begin(), v.end(), inserter(v2, v2.begin()), Square());
     print_container(v2.begin(), v2.end());
 
-    //// vector -> list もできる
+    //// vector -> list
     ///  back_inserter も
     std::list<int> l;
     transform(v.begin(), v.end(), back_inserter(l), Square());
     print_container(l.begin(), l.end());
 
+    //// list -> deque
+    ///  back_inserter も
+    std::deque<int> d;
+    transform(l.begin(), l.end(), back_inserter(d), Square());
+    print_container(d.begin(), d.end());
+
     //// 元コンテナの上書き
     transform(v.begin(), v.end(), v.begin(), Square());
     print_container(v.begin(), v.end());
+
   }
+  {
+    //// string
+    std::deque<std::string> d(months, months + array_length(months));
+    std::vector<std::string> v;
+    transform(d.begin(), d.end(), back_inserter(v), ToUpper());
+    print_container(v.begin(), v.end());
+
+    // 大きくなったvectorをフィットさせる
+    {
+      std::cout << "capacity:" << v.capacity() << std::endl;
+      std::vector<std::string>(v).swap(v);
+      std::cout << "capacity:" << v.capacity() << std::endl;
+    }
+  }
+  print_sep(__LINE__);
 
   // コピー
   {
@@ -102,6 +146,7 @@ int main()
     copy(l.begin(), l.end(), inserter(v, v.begin()));
     print_container(v.begin(), v.end());
   }
+  print_sep(__LINE__);
 
   // inject
   {
@@ -118,6 +163,7 @@ int main()
     int sum = accumulate(v.begin(), v.end(), 0, Sum2<int>());
     std::cout << "sum:" << sum << std::endl;
   }
+  print_sep(__LINE__);
 
   // バインダ
   {
@@ -142,17 +188,45 @@ int main()
     std::vector<int> newone(v.begin(), last);
     std::cout << "size:" << newone.size() << std::endl;
   }
+  print_sep(__LINE__);
 
   // Enumerable#select 的な動作
   {
     std::vector<std::string> v(months, months + array_length(months));
     std::list<std::string> l;
-        std::string ending("ber");
+    std::string ending("ber");
     copy_if(v.begin(), v.end(), back_inserter(l), EndsWith(ending));
     print_container(l.begin(), l.end());
   }
+  print_sep(__LINE__);
+
+  // list でのremove
+  {
+    // vector や deque と異なりメンバ関数を使える
+    std::list<std::string> l(months, months + array_length(months));
+    std::string ending("ber");
+    l.remove_if(EndsWith(ending));
+    print_container(l.begin(), l.end());
+    std::cout << "size:" << l.size() << std::endl;
+  }
+  {
+    // アルゴリズムも使えるが，IFが直観的ではないし,
+    // サイズも小さくなってはいない
+    std::list<std::string> l(months, months + array_length(months));
+    std::string ending("ber");
+    std::list<std::string>::iterator last =
+      remove_if(l.begin(), l.end(), EndsWith(ending));
+    print_container(l.begin(), last);
+    std::cout << "size:" << l.size() << std::endl;
+  }
+  print_sep(__LINE__);
 
   getchar();
 
   return 0;
+}
+
+inline void print_sep(int n)
+{
+  std::cout << "========== " << n << " ==========" << std::endl;
 }
