@@ -11,6 +11,9 @@ void print_container(ForwardIt first, ForwardIt last)
   std::cout << std::endl;
 }
 
+#ifndef _MSC_VER
+
+#if __cplusplus < 201103L
 template <typename InputIterator,  typename OutputIterator,  typename Predicate>
 OutputIterator copy_if(InputIterator first,  InputIterator last,
     OutputIterator result,  Predicate pred)
@@ -23,5 +26,8 @@ OutputIterator copy_if(InputIterator first,  InputIterator last,
   }
   return result;
 }
+#endif // __cplusplus
+
+#endif // _MSC_VER
 
 #endif

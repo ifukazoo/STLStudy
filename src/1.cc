@@ -221,6 +221,7 @@ int main()
   }
   print_sep(__LINE__);
 
+  std::cout << __cplusplus << std::endl;
   getchar();
 
   return 0;
