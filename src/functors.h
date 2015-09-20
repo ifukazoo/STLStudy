@@ -55,21 +55,17 @@ struct Square {
   }
 };
 
-template<typename T>
 struct Sum {
-  Sum():sum_(0){};
-  void operator()(T& val) {
-    sum_ += val;
-  }
-  operator T () {
-    return static_cast<T>(sum_);
-  }
-  T sum_;
-};
-template<typename T>
-struct Sum2 {
+  template<typename T>
   T operator()(T lhs, T rhs) {
     return lhs + rhs;
+  }
+};
+
+struct DeleteObject {
+  template<typename T>
+  void operator()(T* p) {
+    delete p;
   }
 };
 

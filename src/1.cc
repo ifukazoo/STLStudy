@@ -18,9 +18,48 @@
 
 inline void print_sep(int n);
 
+inline void print_int_array(int array[], int len)
+{
+  int* p = array;
+  std::string sep = "";
+  while (p < array + len) {
+    std::cout << sep << *p;
+    sep = ",";
+    p++;
+  }
+  std::cout << std::endl;
+}
+
+class Human {
+public:
+  Human(std::string name) :name_(name) {
+  };
+  virtual ~Human() {
+    std::cout << "destructoin of " << name_ << std::endl;
+  };
+  std::string Name() {
+    return name_;
+  }
+  friend std::ostream& operator<<(std::ostream&, const Human*);
+private:
+  std::string name_;
+};
+std::ostream& operator<<(std::ostream& os, const Human* human) {
+  std::cout << human->name_;
+  return os;
+};
+class Child :public Human {
+public:
+  Child(std::string name) :Human(name) {
+  };
+  virtual ~Child() {
+    std::cout << "child destructoin => ";
+  };
+};
+
 int main()
 {
-  RandomGenerator my_rand(static_cast<unsigned>(time(NULL)), 10);
+  RandomGenerator random_gen(static_cast<unsigned>(time(NULL)), 10);
   std::string months[] = { "January", "February", "March", "April", "May",
     "June", "July", "August", "September", "October", "November", "December" };
 
@@ -35,17 +74,17 @@ int main()
   }
   {
     std::vector<int> v(10);
-    generate(v.begin(), v.end(), my_rand);
+    generate(v.begin(), v.end(), random_gen);
     print_container(v.begin(), v.end());
   }
   {
     std::list<int> l(10);
-    generate(l.begin(), l.end(), my_rand);
+    generate(l.begin(), l.end(), random_gen);
     print_container(l.begin(), l.end());
   }
   {
     std::deque<int> d(10);
-    generate(d.begin(), d.end(), my_rand);
+    generate(d.begin(), d.end(), random_gen);
     print_container(d.begin(), d.end());
   }
   print_sep(__LINE__);
@@ -75,7 +114,7 @@ int main()
   // 数える
   {
     std::vector<int> v(10);
-    generate(v.begin(), v.end(), my_rand);
+    generate(v.begin(), v.end(), random_gen);
     print_container(v.begin(), v.end());
     int zero = count(v.begin(), v.end(), 0);
     std::cout << "0:" << zero << std::endl;
@@ -94,7 +133,7 @@ int main()
   {
     // 適用結果を別コンテナにコピー
     std::vector<int> v(10);
-    generate(v.begin(), v.end(), my_rand);
+    generate(v.begin(), v.end(), random_gen);
     print_container(v.begin(), v.end());
 
     //// insert iteratorを使って第2vectorの要素数を自動的に確保
@@ -146,6 +185,24 @@ int main()
     copy(l.begin(), l.end(), inserter(v, v.begin()));
     print_container(v.begin(), v.end());
   }
+  {
+    // 単一要素メンバ関数より範囲メンバ関数を使おう
+    std::list<std::string> l(10);
+    fill(l.begin(), l.end(), "hello");
+    print_container(l.begin(), l.end());
+
+    // list -> vector
+    std::vector<std::string> v;
+    //// assign 素晴らしい
+    v.assign(l.begin(), l.end());
+    print_container(v.begin(), v.end());
+
+    std::vector<std::string> v2;
+    v2.push_back("Ya");
+    v2.push_back("today.");
+    v2.insert(v2.begin() + 1, l.begin(), l.end());
+    print_container(v2.begin(), v2.end());
+  }
   print_sep(__LINE__);
 
   // inject
@@ -153,14 +210,7 @@ int main()
     int ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     std::vector<int> v(ten, ten + array_length(ten));
     print_container(v.begin(), v.end());
-    int sum = for_each(v.begin(), v.end(), Sum<int>());
-    std::cout << "sum:" << sum << std::endl;
-  }
-  {
-    int ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::vector<int> v(ten, ten + array_length(ten));
-    print_container(v.begin(), v.end());
-    int sum = accumulate(v.begin(), v.end(), 0, Sum2<int>());
+    int sum = accumulate(v.begin(), v.end(), 0, Sum());
     std::cout << "sum:" << sum << std::endl;
   }
   print_sep(__LINE__);
@@ -169,7 +219,7 @@ int main()
   {
     // 2項関数をとるalgorithmを1項関数のように振る舞わせる．
     std::list<int> l(10);
-    generate(l.begin(), l.end(), my_rand);
+    generate(l.begin(), l.end(), random_gen);
     print_container(l.begin(), l.end());
 
     // greaterの第2引数に常時5がバインドされる．
@@ -180,7 +230,7 @@ int main()
   }
   {
     std::vector<int> v(10);
-    generate(v.begin(), v.end(), my_rand);
+    generate(v.begin(), v.end(), random_gen);
     print_container(v.begin(), v.end());
 
     std::vector<int>::iterator last =
@@ -218,6 +268,83 @@ int main()
       remove_if(l.begin(), l.end(), EndsWith(ending));
     print_container(l.begin(), last);
     std::cout << "size:" << l.size() << std::endl;
+  }
+  print_sep(__LINE__);
+
+  // コンテナ内のオブジェクトをdeleteする
+  {
+    std::vector<Human*> v;
+    v.push_back(new Human("figaro"));
+    v.push_back(new Human("susanna"));
+    v.push_back(new Child("cherubino"));
+    print_container(v.begin(), v.end());
+    for_each(v.begin(), v.end(), DeleteObject());
+    // for_eachが非常に役に立っている!!
+  }
+  print_sep(__LINE__);
+
+  // 要素の削除
+  {
+    std::vector<int> v(10);
+    std::deque<int> d(10);
+    std::list<int> l(10);
+    generate(v.begin(), v.end(), random_gen);
+    generate(d.begin(), d.end(), random_gen);
+    generate(l.begin(), l.end(), random_gen);
+    print_container(v.begin(), v.end());
+    print_container(d.begin(), d.end());
+    print_container(l.begin(), l.end());
+
+    v.erase(remove(v.begin(), v.end(), 0), v.end());
+    d.erase(remove(d.begin(), d.end(), 0), d.end());
+    l.remove(0);
+
+    print_container(v.begin(), v.end());
+    print_container(d.begin(), d.end());
+    print_container(l.begin(), l.end());
+
+    v.erase(remove_if(v.begin(), v.end(), std::bind2nd(std::greater<int>(), 5)), v.end());
+    d.erase(remove_if(d.begin(), d.end(), std::bind2nd(std::greater<int>(), 5)), d.end());
+    l.remove_if(std::bind2nd(std::greater<int>(), 5));
+
+    print_container(v.begin(), v.end());
+    print_container(d.begin(), d.end());
+    print_container(l.begin(), l.end());
+  }
+  {
+    // 削除しながら処理がある場合
+    // deque, listも同じ形式でできる
+    std::vector<Human*> v;
+    v.push_back(new Human("figaro"));
+    v.push_back(new Human("susanna"));
+    v.push_back(new Child("cherubino"));
+    std::string ending("o");
+    EndsWith ends_with(ending);
+
+    std::vector<Human*>::iterator p = v.begin();
+    while (p != v.end()) {
+      std::string name = (*p)->Name();
+      if (ends_with(name)) {
+        delete *p;
+        p = v.erase(p);
+      } else {
+        p++;
+      }
+    }
+    print_container(v.begin(), v.end());
+  }
+  print_sep(__LINE__);
+
+  // vector と stringを c api に渡す
+  {
+    std::vector<int> v(10);
+    generate(v.begin(), v.end(), random_gen);
+    if (!v.empty()) {
+      print_int_array(&v[0], v.size());
+    }
+
+    std::string s("STL is great!!");
+    printf("%s\n", s.c_str());
   }
   print_sep(__LINE__);
 
