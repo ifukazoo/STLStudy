@@ -1,5 +1,5 @@
-# STLStudy
-STL Study
+# STL の 復習
+## もうひとつのテーマ
 MSVCとGCCで共通ソースを利用する．
 
 ## 特記事項
