@@ -10,6 +10,18 @@ void print_container(ForwardIt first, ForwardIt last)
   }
   std::cout << std::endl;
 }
+template<typename ForwardIt>
+void print_pair_container(ForwardIt first, ForwardIt last)
+{
+  std::string sep("");
+  while (first != last) {
+    std::cout << sep << "(" << first->first << ", " << first->second << ")";
+    sep = " ";
+    first++;
+  }
+  std::cout << std::endl;
+}
+
 
 #ifdef _MSC_VER
 // MSVC

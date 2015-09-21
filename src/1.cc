@@ -7,6 +7,7 @@
 #include <list>
 #include <deque>
 #include <map>
+#include <set>
 #include <algorithm>
 #include <numeric>
 #include <iostream>
@@ -36,6 +37,7 @@ inline void print_int_array(int array[], int len)
 class Human {
 public:
   Human(std::string name) :name_(name) {
+    std::cout << "construct of " << name_ << std::endl;
   };
   virtual ~Human() {
     std::cout << "destructoin of " << name_ << std::endl;
@@ -44,13 +46,20 @@ public:
     return name_;
   }
   friend std::ostream& operator<<(std::ostream&, const Human*);
+  friend bool operator<(const Human& lhs, const Human& rhs);
 private:
   std::string name_;
 };
+
 std::ostream& operator<<(std::ostream& os, const Human* human) {
   std::cout << human->name_;
   return os;
-};
+}
+
+bool operator<(const Human& lhs, const Human& rhs) {
+  return lhs.name_ < rhs.name_;
+}
+
 class Child :public Human {
 public:
   Child(std::string name) :Human(name) {
@@ -356,16 +365,13 @@ int main()
     RandomGenerator random_gen_alpha(static_cast<unsigned>(time(NULL)), 11);
     std::map<int, std::string> m;
 
-#if 0 ////========== create map
-    for (int i = 0; i < 12; i++) {
-      m.insert(std::pair<int, std::string>(i + 1, months[i]));
-    }
-#else
+    // for (int i = 0; i < 12; i++) {
+    //   m.insert(std::pair<int, std::string>(i + 1, months[i]));
+    // }
     // make_pairを使えば型が不要
     for (int i = 0; i < 12; i++) {
       m.insert(make_pair(i + 1, months[i]));
     }
-#endif // ========== create map end
 
     {
       int key = random_gen_alpha() + 1;
@@ -380,6 +386,56 @@ int main()
         print_key_val(p);
       }
     }
+  }
+  print_sep(__LINE__);
+
+  // []演算子
+  // 挿入はinsertの効率が優れ，更新は[]の効率が優れる．
+  {
+    // 代入
+    std::map<int, std::string> m;
+    for (int i = 0; i < 12; i++) {
+      m[i + 1] =  months[i];
+    }
+    print_pair_container(m.begin(), m.end());
+  }
+  {
+    // キーが無かったら作成する
+    std::vector<int> v;
+    std::vector<std::pair<int, int> > keyvals;
+    for (int i = 0; i < 10; i++) {
+      v.push_back(i + 1);
+    }
+    transform(v.begin(), v.end(), back_inserter(keyvals), CreatePair());
+    std::map<int, int> m(keyvals.begin(), keyvals.end());
+    print_pair_container(m.begin(), m.end());
+    int n = m[100];
+    std::cout << "n=" << n << std::endl;
+    print_pair_container(m.begin(), m.end());
+  }
+  print_sep(__LINE__);
+
+  // set
+  {
+    // 大文字小文字を区別しない関数を渡す
+    std::set<std::string, CIStringLess> ciss;
+    ciss.insert("Figaro"); ciss.insert("figaro");
+    ciss.insert("Susanna"); ciss.insert("susanna");
+    ciss.insert("Cherubino"); ciss.insert("cherubino");
+    print_container(ciss.begin(), ciss.end());
+    //メンバ関数は渡した関数で比較するので混乱はない
+    std::cout << std::boolalpha << (ciss.find("figaro") != ciss.end()) << std::endl;
+    // findアルゴリズムでは operator== を使うので，falseが返る
+    std::cout << std::boolalpha << (std::find(ciss.begin(), ciss.end(), std::string("figaro")) != ciss.end()) << std::endl;
+  }
+  {
+    // ポインタコンテナに対する比較関数オブジェクトを指定する
+    std::set<Human*, DereferenceLess> s;
+    s.insert(new Human("figaro"));
+    s.insert(new Human("susanna"));
+    s.insert(new Child("cherubino"));
+    print_container(s.begin(), s.end());
+    for_each(s.begin(), s.end(), DeleteObject());
   }
   print_sep(__LINE__);
 

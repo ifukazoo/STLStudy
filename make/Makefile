@@ -1,12 +1,12 @@
 #Makefile
 
 TARGETS = \
-						1\
+	1\
 
-CPP11 = cpp11
 CPP98 = cpp98
-$(CPP98):$(TARGETS)
+CPP11 = cpp11
 $(CPP11):$(TARGETS)
+$(CPP98):$(TARGETS)
 .PHONY:all
 all: $(CPP98)
 
@@ -23,6 +23,6 @@ endif
 
 -include *.d
 
-.PHONY:	clean
+.PHONY:clean
 clean:
 	rm -rf $(TARGETS) *.d core

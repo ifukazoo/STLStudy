@@ -1,6 +1,8 @@
 ﻿#ifndef _FUNCTORS_H_
 #define _FUNCTORS_H_
 
+#include <cstring>
+
 
 //
 // 関数オブジェクト
@@ -36,9 +38,9 @@ struct GT: public std::unary_function<std::string, bool> {
 
 struct Print {
   template<typename T>
-  void operator()(T val) {
-    std::cout << val << " ";
-  }
+    void operator()(T val) {
+      std::cout << val << " ";
+    }
 };
 
 struct ToUpper {
@@ -55,18 +57,24 @@ struct Square {
   }
 };
 
+struct CreatePair {
+  std::pair<int, int> operator()(int n) {
+    return std::make_pair(n, n * n);
+  }
+};
+
 struct Sum {
   template<typename T>
-  T operator()(T lhs, T rhs) {
-    return lhs + rhs;
-  }
+    T operator()(T lhs, T rhs) {
+      return lhs + rhs;
+    }
 };
 
 struct DeleteObject {
   template<typename T>
-  void operator()(T* p) {
-    delete p;
-  }
+    void operator()(T* p) {
+      delete p;
+    }
 };
 
 struct GetLength
@@ -82,11 +90,27 @@ struct IsEight {
   }
 };
 
-
-
 struct IsEven: public std::unary_function<int, bool> {
   result_type operator()(argument_type i) {
     return static_cast<result_type>(i % 2 == 0);
+  }
+};
+
+struct CIStringLess :public std::binary_function<std::string, std::string, bool> {
+
+  // 等価に対して trueを返さないこと!!
+  bool operator() (const std::string& lhs, const std::string rhs) const
+  {
+    return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+  }
+};
+
+struct DereferenceLess {
+  // 等価に対して trueを返さないこと!!
+  template<typename Ptr>
+  bool operator()(Ptr p1, Ptr p2)
+  {
+    return *p1 < *p2;
   }
 };
 
