@@ -101,7 +101,11 @@ struct CIStringLess :public std::binary_function<std::string, std::string, bool>
   // 等価に対して trueを返さないこと!!
   bool operator() (const std::string& lhs, const std::string rhs) const
   {
+#ifdef _MSC_VER
+    return _stricmp(lhs.c_str(), rhs.c_str()) < 0;
+#else
     return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+#endif
   }
 };
 
