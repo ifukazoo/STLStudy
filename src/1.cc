@@ -6,6 +6,7 @@
 #include <vector>
 #include <list>
 #include <deque>
+#include <map>
 #include <algorithm>
 #include <numeric>
 #include <iostream>
@@ -16,8 +17,10 @@
 #include "functors.h"
 #include "functions.h"
 
-inline void print_sep(int n);
-
+inline void print_sep(int n)
+{
+  std::cout << "========== " << n << " ==========" << std::endl;
+}
 inline void print_int_array(int array[], int len)
 {
   int* p = array;
@@ -348,13 +351,41 @@ int main()
   }
   print_sep(__LINE__);
 
+  //連想コンテナ基礎
+  {
+    RandomGenerator random_gen_alpha(static_cast<unsigned>(time(NULL)), 11);
+    std::map<int, std::string> m;
+
+#if 0 ////========== create map
+    for (int i = 0; i < 12; i++) {
+      m.insert(std::pair<int, std::string>(i + 1, months[i]));
+    }
+#else
+    // make_pairを使えば型が不要
+    for (int i = 0; i < 12; i++) {
+      m.insert(make_pair(i + 1, months[i]));
+    }
+#endif // ========== create map end
+
+    {
+      int key = random_gen_alpha() + 1;
+      std::map<int, std::string>::iterator p = m.find(key);
+      if (p != m.end()) {
+        print_key_val(p);
+      }
+    }
+    {
+      // 巡回アクセス
+      for (std::map<int, std::string>::iterator p = m.begin(); p != m.end(); p++) {
+        print_key_val(p);
+      }
+    }
+  }
+  print_sep(__LINE__);
+
   std::cout << __cplusplus << std::endl;
   getchar();
 
   return 0;
 }
 
-inline void print_sep(int n)
-{
-  std::cout << "========== " << n << " ==========" << std::endl;
-}
