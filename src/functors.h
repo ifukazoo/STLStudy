@@ -118,6 +118,12 @@ struct DereferenceLess {
   }
 };
 
-
+struct DereferenceEq {
+  template<typename Ptr>
+    bool operator()(Ptr p1, Ptr p2) const
+    {
+      return *p1 == *p2;
+    }
+};
 
 #endif

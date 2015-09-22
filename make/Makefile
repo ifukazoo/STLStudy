@@ -1,14 +1,17 @@
 #Makefile
 
-TARGETS = \
+PROG98 = \
 	1\
+
+PROG11 = \
+	2\
 
 CPP98 = cpp98
 CPP11 = cpp11
-$(CPP11):$(TARGETS)
-$(CPP98):$(TARGETS)
-.PHONY:all
-all: $(CPP98)
+
+all: $(PROG98)
+$(CPP98):$(PROG98)
+$(CPP11):$(PROG98) $(PROG11)
 
 CC   =  g++
 CFLAGS = -Wall -MD
@@ -25,4 +28,4 @@ endif
 
 .PHONY:clean
 clean:
-	rm -rf $(TARGETS) *.d core
+	rm -rf $(PROG98) $(PROG11) *.d core tags

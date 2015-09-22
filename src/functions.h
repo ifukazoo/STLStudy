@@ -12,5 +12,10 @@ void print_key_val(MapIterator i)
 {
   std::cout << "(" << i->first << ", " << i->second << ")" << std::endl;
 }
+
+inline void print_sep(int n)
+{
+  std::cout << "========== " << n << " ==========" << std::endl;
+}
 #endif
 

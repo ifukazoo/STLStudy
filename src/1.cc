@@ -18,10 +18,6 @@
 #include "functors.h"
 #include "functions.h"
 
-inline void print_sep(int n)
-{
-  std::cout << "========== " << n << " ==========" << std::endl;
-}
 inline void print_int_array(int array[], int len)
 {
   int* p = array;
