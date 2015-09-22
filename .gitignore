@@ -11,3 +11,7 @@ tags
 /make/1
 /make/2
 /make/3
+/vc/vc2/Debug
+/vc/vc3/Debug
+*.opensdf
+*.sdf
