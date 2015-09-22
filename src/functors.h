@@ -21,7 +21,8 @@ struct RandomGenerator {
 
 struct EndsWith {
   EndsWith(std::string& ending) :ending_(ending){}
-  bool operator()(std::string& s) {
+  bool operator()(std::string& s) const
+  {
     if (ending_.size() > s.size()) return false;
     return std::equal(ending_.rbegin(),  ending_.rend(),  s.rbegin());
   }
@@ -112,7 +113,7 @@ struct CIStringLess :public std::binary_function<std::string, std::string, bool>
 struct DereferenceLess {
   // 等価に対して trueを返さないこと!!
   template<typename Ptr>
-  bool operator()(Ptr p1, Ptr p2)
+  bool operator()(Ptr p1, Ptr p2) const
   {
     return *p1 < *p2;
   }
