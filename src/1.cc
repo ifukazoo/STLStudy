@@ -18,18 +18,6 @@
 #include "functors.h"
 #include "functions.h"
 
-inline void print_int_array(int array[], int len)
-{
-  int* p = array;
-  std::string sep = "";
-  while (p < array + len) {
-    std::cout << sep << *p;
-    sep = ",";
-    p++;
-  }
-  std::cout << std::endl;
-}
-
 class Role {
 public:
   Role(std::string name) :name_(name) {
@@ -77,7 +65,8 @@ static void TestBark(Role role)
 
 int main()
 {
-  RandomGenerator random_gen(static_cast<unsigned>(time(NULL)), 10);
+  RandomGenerator<int> random_gen;
+  random_gen.init(static_cast<unsigned>(time(NULL)), 10);
   std::string months[] = { "January", "February", "March", "April", "May",
     "June", "July", "August", "September", "October", "November", "December" };
 
@@ -358,7 +347,7 @@ int main()
     std::vector<int> v(10);
     generate(v.begin(), v.end(), random_gen);
     if (!v.empty()) {
-      print_int_array(&v[0], v.size());
+      print_array(&v[0], v.size());
     }
 
     std::string s("STL is great!!");
@@ -368,7 +357,8 @@ int main()
 
   //連想コンテナ基礎
   {
-    RandomGenerator random_gen_alpha(static_cast<unsigned>(time(NULL)), 11);
+    RandomGenerator<int> random_gen_alpha;
+    random_gen_alpha.init(static_cast<unsigned>(time(NULL)), 11);
     std::map<int, std::string> m;
 
     // for (int i = 0; i < 12; i++) {
@@ -424,7 +414,7 @@ int main()
   // set
   {
     // 大文字小文字を区別しない関数を渡す
-    std::set<std::string, CIStringLess> ciss;
+    std::set<std::string, CIStringLess> ciss; // 独自Lessを書く
     ciss.insert("Figaro"); ciss.insert("figaro");
     ciss.insert("Susanna"); ciss.insert("susanna");
     ciss.insert("Cherubino"); ciss.insert("cherubino");
@@ -481,7 +471,6 @@ int main()
       print_sep(__LINE__);
     }
   }
-
   std::cout << __cplusplus << std::endl;
   getchar();
 

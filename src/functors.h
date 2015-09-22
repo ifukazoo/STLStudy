@@ -9,14 +9,20 @@
 //
 // struct とすることで "public:" を書く必要がない
 
-struct RandomGenerator {
-  RandomGenerator(unsigned int seed, int div) : div_(div) {
+template <typename T>
+class RandomGenerator {
+public:
+
+  void init(unsigned int seed, T div) {
+    div_ = div;
     srand(seed);
   }
-  int operator()() {
+
+  T operator()() {
     return rand() % div_;
   }
-  int div_;
+private:
+  T div_;
 };
 
 struct EndsWith: public std::unary_function<const std::string&, bool> {

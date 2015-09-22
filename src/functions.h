@@ -17,5 +17,18 @@ inline void print_sep(int n)
 {
   std::cout << "========== " << n << " ==========" << std::endl;
 }
+template<typename T>
+void print_array(T array[], int len)
+{
+  T* p = array;
+  std::string sep = "";
+  while (p < array + len) {
+    std::cout << sep << *p;
+    sep = ",";
+    p++;
+  }
+  std::cout << std::endl;
+}
+
 #endif
 
