@@ -30,40 +30,50 @@ inline void print_int_array(int array[], int len)
   std::cout << std::endl;
 }
 
-class Human {
+class Role {
 public:
-  Human(std::string name) :name_(name) {
+  Role(std::string name) :name_(name) {
     std::cout << "construct of " << name_ << std::endl;
   };
-  virtual ~Human() {
+  virtual ~Role() {
     std::cout << "destructoin of " << name_ << std::endl;
   };
   std::string Name() {
     return name_;
   }
-  friend std::ostream& operator<<(std::ostream&, const Human*);
-  friend bool operator<(const Human& lhs, const Human& rhs);
+
+  void Bark() {
+    std::cout << "My name is "<< name_ << "." << std::endl;
+  }
+
+  friend std::ostream& operator<<(std::ostream&, const Role*);
+  friend bool operator<(const Role& lhs, const Role& rhs);
 private:
   std::string name_;
 };
 
-std::ostream& operator<<(std::ostream& os, const Human* human) {
+std::ostream& operator<<(std::ostream& os, const Role* human) {
   std::cout << human->name_;
   return os;
 }
 
-bool operator<(const Human& lhs, const Human& rhs) {
+bool operator<(const Role& lhs, const Role& rhs) {
   return lhs.name_ < rhs.name_;
 }
 
-class Child :public Human {
+class Child :public Role {
 public:
-  Child(std::string name) :Human(name) {
+  Child(std::string name) :Role(name) {
   };
   virtual ~Child() {
     std::cout << "child destructoin => ";
   };
 };
+
+static void TestBark(Role role)
+{
+  role.Bark();
+}
 
 int main()
 {
@@ -281,9 +291,9 @@ int main()
 
   // コンテナ内のオブジェクトをdeleteする
   {
-    std::vector<Human*> v;
-    v.push_back(new Human("figaro"));
-    v.push_back(new Human("susanna"));
+    std::vector<Role*> v;
+    v.push_back(new Role("figaro"));
+    v.push_back(new Role("susanna"));
     v.push_back(new Child("cherubino"));
     print_container(v.begin(), v.end());
     for_each(v.begin(), v.end(), DeleteObject());
@@ -322,14 +332,14 @@ int main()
   {
     // 削除しながら処理がある場合
     // deque, listも同じ形式でできる
-    std::vector<Human*> v;
-    v.push_back(new Human("figaro"));
-    v.push_back(new Human("susanna"));
+    std::vector<Role*> v;
+    v.push_back(new Role("figaro"));
+    v.push_back(new Role("susanna"));
     v.push_back(new Child("cherubino"));
     std::string ending("o");
     EndsWith ends_with(ending);
 
-    std::vector<Human*>::iterator p = v.begin();
+    std::vector<Role*>::iterator p = v.begin();
     while (p != v.end()) {
       std::string name = (*p)->Name();
       if (ends_with(name)) {
@@ -426,14 +436,51 @@ int main()
   }
   {
     // ポインタコンテナに対する比較関数オブジェクトを指定する
-    std::set<Human*, DereferenceLess> s;
-    s.insert(new Human("figaro"));
-    s.insert(new Human("susanna"));
+    std::set<Role*, DereferenceLess> s;
+    s.insert(new Role("figaro"));
+    s.insert(new Role("susanna"));
     s.insert(new Child("cherubino"));
     print_container(s.begin(), s.end());
     for_each(s.begin(), s.end(), DeleteObject());
   }
   print_sep(__LINE__);
+
+  // ptr_fun, mem_fun, mem_fun_refについて
+  {
+    {
+      Role roles[] = {
+        Role("figaro"),
+        Role("susanna"),
+        Child("cherubino"),
+      };
+      std::vector<Role> v(roles, roles + array_length(roles));
+
+      // ptr_fun
+      //// 関数を関数オブジェクトに変換する
+      //// for_eachは関数も利用できるので，ここでのptr_funはなくてもコンパイルできる
+      for_each(v.begin(), v.end(), std::ptr_fun(TestBark));
+      print_sep(__LINE__);
+
+      // mem_fun_ref
+      //// メンバ関数を参照を受け取る関数オブジェクトに変換する
+      for_each(v.begin(), v.end(), std::mem_fun_ref(&Role::Bark));
+      print_sep(__LINE__);
+    }
+    {
+      Role* roles[] = {
+        new Role("figaro"),
+        new Role("susanna"),
+        new Child("cherubino"),
+      };
+      std::vector<Role*> v(roles, roles + array_length(roles));
+
+      // mem_fun
+      //// メンバ関数をポインタを受け取る関数オブジェクトに変換する
+      for_each(v.begin(), v.end(), std::mem_fun(&Role::Bark));
+      for_each(v.begin(), v.end(), DeleteObject());
+      print_sep(__LINE__);
+    }
+  }
 
   std::cout << __cplusplus << std::endl;
   getchar();

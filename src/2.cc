@@ -10,34 +10,34 @@
 #include "functors.h"
 #include "functions.h"
 
-class Human {
+class Role {
 public:
 
-  Human(std::string name) :name_(name) {
+  Role(std::string name) :name_(name) {
     std::cout << "construct of " << name_ << std::endl;
   };
-  virtual ~Human() {
+  virtual ~Role() {
     std::cout << "destructoin of " << name_ << std::endl;
   };
   std::string Name() {
     return name_;
   }
-  friend std::ostream& operator<<(std::ostream&, const Human*);
-  friend bool operator<(const Human& lhs, const Human& rhs);
-  friend bool operator==(const Human& lhs, const Human& rhs);
+  friend std::ostream& operator<<(std::ostream&, const Role*);
+  friend bool operator<(const Role& lhs, const Role& rhs);
+  friend bool operator==(const Role& lhs, const Role& rhs);
 private:
   std::string name_;
 };
 
-std::ostream& operator<<(std::ostream& os, const Human* human) {
+std::ostream& operator<<(std::ostream& os, const Role* human) {
   std::cout << (human ? human->name_ : "(nil)");
   return os;
 }
 
-bool operator<(const Human& lhs, const Human& rhs) {
+bool operator<(const Role& lhs, const Role& rhs) {
   return lhs.name_ < rhs.name_;
 }
-bool operator==(const Human& lhs, const Human& rhs) {
+bool operator==(const Role& lhs, const Role& rhs) {
   return lhs.name_ == rhs.name_;
 }
 
@@ -71,12 +71,12 @@ int main()
     print_sep(__LINE__);
   }
   {
-    typedef std::unordered_map<std::string, Human*> ComposerMap;
+    typedef std::unordered_map<std::string, Role*> ComposerMap;
     ComposerMap m;
 
-    m.insert(ComposerMap::value_type("Italy", new Human("Verdi")));
-    m.insert(ComposerMap::value_type("Austria", new Human("Mozart")));
-    m.insert(ComposerMap::value_type("Germany", new Human("J.S Bach")));
+    m.insert(ComposerMap::value_type("Italy", new Role("Verdi")));
+    m.insert(ComposerMap::value_type("Austria", new Role("Mozart")));
+    m.insert(ComposerMap::value_type("Germany", new Role("J.S Bach")));
 
     {
       // 巡回アクセス
@@ -108,8 +108,8 @@ int main()
     // std::unordered_set<std::string, MyHash, HyEq> set;
   }
   {
-    struct HumanPtrHash {
-      size_t operator()(Human* p) const
+    struct RolePtrHash {
+      size_t operator()(Role* p) const
       {
         std::hash<std::string> hash;
         return hash(p->Name());
@@ -117,13 +117,13 @@ int main()
     };
 
     // ポインタコンテナに対する比較関数オブジェクトを指定する
-    typedef std::unordered_set<Human*, HumanPtrHash, DereferenceEq> HumanHash;
-    HumanHash s;
-    std::pair<HumanHash::iterator, bool> result;
-    s.insert(new Human("figaro"));
-    s.insert(new Human("susanna"));
-    s.insert(new Human("cherubino"));
-    result = s.insert(new Human("figaro")); // 本来は deleteの必要あり
+    typedef std::unordered_set<Role*, RolePtrHash, DereferenceEq> RoleHash;
+    RoleHash s;
+    std::pair<RoleHash::iterator, bool> result;
+    s.insert(new Role("figaro"));
+    s.insert(new Role("susanna"));
+    s.insert(new Role("cherubino"));
+    result = s.insert(new Role("figaro")); // 本来は deleteの必要あり
     std::cout << std::boolalpha << result.second << std::endl;
     print_container(s.begin(), s.end());
     std::for_each(s.begin(), s.end(), DeleteObject());

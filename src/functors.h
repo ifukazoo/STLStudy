@@ -85,8 +85,8 @@ struct GetLength
   }
 };
 
-struct IsEight {
-  bool operator()(int n) {
+struct IsEight : public std::unary_function<int, bool> {
+  result_type operator()(argument_type n) {
     return n == 8;
   }
 };
