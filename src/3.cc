@@ -35,10 +35,11 @@ inline int cmp_double(const void* l, const void* r)
 
 int main()
 {
+  const int VECTOR_SIZE = 1000000;
   RandomGenerator<double> random_gen;
   random_gen.init(static_cast<unsigned>(time(NULL)), 65535.0);
 
-  std::vector<double> org(1000000);
+  std::vector<double> org(VECTOR_SIZE);
   generate(org.begin(), org.end(), random_gen);
 
   {
@@ -61,12 +62,16 @@ int main()
   }
 
   {
-    std::vector<double> copy = org;
+    double copy[VECTOR_SIZE];
+    std::vector<double>::const_iterator p = org.begin();
+    for (int i = 0; i < VECTOR_SIZE; i++) {
+      copy[i] = org[i];
+    }
     clock_t begin = clock();
-    qsort(&copy[0], copy.size(), sizeof(double), cmp_double);
+    qsort(&copy[0], VECTOR_SIZE, sizeof(double), cmp_double);
     clock_t end = clock();
     std::cout << (end - begin) << std::endl;
-    // print_array(&copy[0], copy.size());
+    // print_array(&copy[0], VECTOR_SIZE);
     // getchar();
   }
   getchar();
