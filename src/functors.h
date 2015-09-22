@@ -19,14 +19,15 @@ struct RandomGenerator {
   int div_;
 };
 
-struct EndsWith {
-  EndsWith(std::string& ending) :ending_(ending){}
-  bool operator()(std::string& s) const
+struct EndsWith: public std::unary_function<const std::string&, bool> {
+  EndsWith(argument_type ending) :ending_(ending) {
+  }
+  result_type operator()(argument_type s) const
   {
     if (ending_.size() > s.size()) return false;
     return std::equal(ending_.rbegin(),  ending_.rend(),  s.rbegin());
   }
-  std::string& ending_;
+  std::string ending_;
 };
 
 struct GT: public std::unary_function<std::string, bool> {
@@ -44,9 +45,9 @@ struct Print {
     }
 };
 
-struct ToUpper {
-  std::string operator()(std::string& org) {
-    std::string upper = org;;
+struct ToUpper : public std::unary_function<const std::string&, std::string> {
+  result_type operator()(argument_type org) {
+    result_type upper = org;;
     std::transform(org.begin(), org.end(), upper.begin(), ::toupper);
     return upper;
   }
@@ -97,10 +98,10 @@ struct IsEven: public std::unary_function<int, bool> {
   }
 };
 
-struct CIStringLess :public std::binary_function<std::string, std::string, bool> {
+struct CIStringLess :public std::binary_function<const std::string&, const std::string&, bool> {
 
   // 等価に対して trueを返さないこと!!
-  bool operator() (const std::string& lhs, const std::string rhs) const
+  result_type operator() (first_argument_type lhs, second_argument_type rhs) const
   {
 #ifdef _MSC_VER
     return _stricmp(lhs.c_str(), rhs.c_str()) < 0;
