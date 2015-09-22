@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <functional>
 #include "functions.h"
 
 template <typename T>
@@ -68,6 +69,7 @@ int main()
     // print_array(&copy[0], copy.size());
     // getchar();
   }
+  getchar();
 
   return 0;
 }
