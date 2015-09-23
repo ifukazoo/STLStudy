@@ -18,7 +18,7 @@ $(CPP11):$(PROG98) $(PROG11)
 sort: $(PROG_SORT_TEST)
 
 CC   =  g++
-CFLAGS = -Wall -MD
+CFLAGS = -Wall -Wextra -MD
 VPATH = ../src
 
 ifeq ($(MAKECMDGOALS), $(CPP11))
@@ -32,4 +32,4 @@ endif
 
 .PHONY:clean
 clean:
-	rm -rf $(PROG98) $(PROG11) *.d core tags
+	rm -rf $(PROG98) $(PROG11) $(PROG_SORT_TEST) *.d core tags
