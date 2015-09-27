@@ -166,6 +166,15 @@ int main()
 
   }
   {
+    std::vector<int> v(10);
+    generate(v.begin(), v.end(), random_gen);
+    print_container(v.begin(), v.end());
+
+    //// referenceを使用する関数オブジェクト + for_each
+    for_each(v.begin(), v.end(), AddSome<10>());
+    print_container(v.begin(), v.end());
+  }
+  {
     //// string
     std::deque<std::string> d(months, months + array_length(months));
     std::vector<std::string> v;

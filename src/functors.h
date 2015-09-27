@@ -65,6 +65,13 @@ struct Square {
   }
 };
 
+template<int V>
+struct AddSome {
+  void operator()(int& n) {
+    n = n + V;
+  }
+};
+
 struct CreatePair {
   std::pair<int, int> operator()(int n) {
     return std::make_pair(n, n * n);
