@@ -1,7 +1,11 @@
 ﻿#ifndef _FUNCTORS_H_
 #define _FUNCTORS_H_
 
+#include <cstdlib>
 #include <cstring>
+#include <functional>
+#include <algorithm>
+#include <iostream>
 
 
 //

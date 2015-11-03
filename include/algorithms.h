@@ -1,6 +1,8 @@
 ﻿#ifndef _ALGORITHMS_H_
 #define _ALGORITHMS_H_
 
+#include <iostream>
+
 template<typename ForwardIt>
 void print_container(ForwardIt first, ForwardIt last)
 {

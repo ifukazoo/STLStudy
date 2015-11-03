@@ -1,35 +1,22 @@
 #Makefile
 
-PROG98 = \
-	1\
+CPP98 := 1
+CPP11 := 2
+SORT  := 3
+BINARY := $(CPP98) $(CPP11) $(SORT)
 
-PROG11 = \
-	2\
+all: $(CPP98) $(CPP11) $(SORT)
+cpp98: $(CPP98)
+cpp11: $(CPP11)
+sort:  $(SORT)
 
-PROG_SORT_TEST = \
-	3\
+vpath %.cc ../src
+vpath %.h  ../include
 
-CPP98 = cpp98
-CPP11 = cpp11
-
-all: $(PROG98) $(PROG_SORT_TEST)
-$(CPP98):$(PROG98)
-$(CPP11):$(PROG98) $(PROG11)
-sort: $(PROG_SORT_TEST)
-
-CC   =  g++
-CFLAGS = -Wall -Wextra -MD
-VPATH = ../src
-
-ifeq ($(MAKECMDGOALS), $(CPP11))
-CFLAGS += -std=c++11
-endif
-
-%:%.cc
-	$(CC) $(CFLAGS) $< -o $*
+CPPFLAGS = -I ../include -Wall -Wextra -MMD -MP
+$(CPP11) : CPPFLAGS += -std=c++11
 
 -include *.d
-
 .PHONY:clean
 clean:
-	rm -rf $(PROG98) $(PROG11) $(PROG_SORT_TEST) *.d core tags
+	rm -rf $(BINARY) *.d *.o core tags
