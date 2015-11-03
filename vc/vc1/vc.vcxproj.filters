@@ -9,15 +9,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\algorithms.h">
+    <ClInclude Include="..\include\functions.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\functors.h">
+    <ClInclude Include="..\include\functors.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\algorithms.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\1.cc">
+    <ClCompile Include="..\..\src\1.cc">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

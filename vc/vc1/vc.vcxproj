@@ -19,11 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\1.cc" />
+    <ClInclude Include="..\include\algorithms.h" />
+    <ClInclude Include="..\include\functions.h" />
+    <ClInclude Include="..\include\functors.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\algorithms.h" />
-    <ClInclude Include="..\src\functors.h" />
+    <ClCompile Include="..\..\src\1.cc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3E2FD37F-548E-45F8-8E85-0DE6C3C08C70}</ProjectGuid>
@@ -97,6 +98,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

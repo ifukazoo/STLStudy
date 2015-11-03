@@ -90,6 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,9 +151,9 @@
     <ClCompile Include="..\..\src\2.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\algorithms.h" />
-    <ClInclude Include="..\..\src\functions.h" />
-    <ClInclude Include="..\..\src\functors.h" />
+    <ClInclude Include="..\..\include\algorithms.h" />
+    <ClInclude Include="..\..\include\functions.h" />
+    <ClInclude Include="..\..\include\functors.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

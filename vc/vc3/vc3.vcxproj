@@ -22,7 +22,7 @@
     <ClCompile Include="..\..\src\3.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\functions.h" />
+    <ClInclude Include="..\..\include\functions.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B363737C-067B-496D-9FBC-4385B98F3380}</ProjectGuid>
@@ -96,6 +96,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
