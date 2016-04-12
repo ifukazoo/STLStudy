@@ -1,22 +1,25 @@
 #Makefile
 
-CPP98 := 1
-CPP11 := 2
-SORT  := 3
-BINARY := $(CPP98) $(CPP11) $(SORT)
+CPP98     := 1
+CPP11     := 2
+SORT      := 3
+EFFECTIVE := 4
+PROGRAMS  := $(CPP98) $(CPP11) $(SORT) $(EFFECTIVE)
 
-all: $(CPP98) $(CPP11) $(SORT)
-cpp98: $(CPP98)
-cpp11: $(CPP11)
-sort:  $(SORT)
+all:       $(PROGRAMS)
+cpp98:     $(CPP98)
+cpp11:     $(CPP11)
+sort:      $(SORT)
+effective: $(EFFECTIVE)
 
 vpath %.cc ../src
 vpath %.h  ../include
 
 CPPFLAGS = -I ../include -Wall -Wextra -MMD -MP
-$(CPP11) : CPPFLAGS += -std=c++11
+$(CPP11):     CPPFLAGS += -std=c++11
+$(EFFECTIVE): CPPFLAGS += -std=c++11
 
 -include *.d
 .PHONY:clean
 clean:
-	rm -rf $(BINARY) *.d *.o core tags
+	rm -rf $(PROGRAMS) *.d *.o core tags
