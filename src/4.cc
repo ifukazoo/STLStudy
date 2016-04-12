@@ -11,5 +11,7 @@ int main()
 
     for_each(v.begin(), v.end(), [](const std::string& s) { std::cout << s << std::endl;} );
 
+    getchar();
+
     return 0;
 }
